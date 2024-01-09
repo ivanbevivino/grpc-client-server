@@ -36,13 +36,13 @@ var (
 
 // server is used to implement helloworld.GreeterServer.
 type server struct {
-	pb.UnimplementedGrpcClientServer
+	pb.UnimplementedLoggerServer
 }
 
 // SayHello implements helloworld.GreeterServer
-func (s *server) SendMessage(ctx context.Context, in *pb.MessageRequest) (*pb.MessageResponse, error) {
+func (s *server) SendMessage(ctx context.Context, in *pb.LogRequest) (*pb.LogResponse, error) {
 	log.Printf("Received: %v", in.LogLine)
-	return &pb.MessageResponse{Response: "Log recived: " + in.LogLine}, nil
+	return &pb.LogResponse{Response: "Log recived: " + in.LogLine}, nil
 }
 
 func main() {
@@ -52,7 +52,7 @@ func main() {
 		log.Fatalf("failed to listen: %v", err)
 	}
 	s := grpc.NewServer()
-	pb.RegisterGrpcClientServer(s, &server{})
+	pb.RegisterLoggerServer(s, &server{})
 	log.Printf("server listening at %v", lis.Addr())
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)

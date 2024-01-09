@@ -35,8 +35,7 @@ const (
 )
 
 var (
-	addr = flag.String("addr", "localhost:50051", "the address to connect to")
-	name = flag.String("name", defaultName, "Name to greet")
+	addr = flag.String("addr", ":50051", "the address to connect to")
 )
 
 func main() {
@@ -47,19 +46,20 @@ func main() {
 		log.Fatalf("did not connect: %v", err)
 	}
 	defer conn.Close()
-	c := pb.NewGrpcClientClient(conn)
+
+	c := pb.NewLoggerClient(conn)
 
 	// Contact the server and print out its response.
 	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
 	defer cancel()
-	r, err := c.SendMessage(ctx, &pb.MessageRequest{
+	r, err := c.SendMessage(ctx, &pb.LogRequest{
 		Timestamp: int64(123454555),
 		LogLine:   "HOLA COMO ESTAS ....",
-		Tags: []*pb.MessageRequest_Tags{
-			{Value: "la app", Type: pb.MessageRequest_APPLICATION},
-			{Value: "el scope", Type: pb.MessageRequest_SCOPE},
-			{Value: "1.0.0", Type: pb.MessageRequest_VERSION},
-			{Value: "10.0.20.12", Type: pb.MessageRequest_HOST},
+		Tags: []*pb.LogRequest_Tags{
+			{Value: "la app", Type: pb.LogRequest_APPLICATION},
+			{Value: "el scope", Type: pb.LogRequest_SCOPE},
+			{Value: "1.0.0", Type: pb.LogRequest_VERSION},
+			{Value: "10.0.20.12", Type: pb.LogRequest_HOST},
 		},
 	})
 	if err != nil {

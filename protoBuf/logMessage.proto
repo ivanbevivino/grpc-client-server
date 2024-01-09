@@ -1,22 +1,16 @@
 syntax = "proto3";
 package protoBuf;
 
-
-
-
-
 option go_package = "/logMessage";
 option java_multiple_files = true;
-option java_package = "io.grpc.examples.protoBuf";
-option java_outer_classname = "HelloWorldProto";
+option java_package = "io.grpc.examples.helloworld";
+option java_outer_classname = "GrpcClient";
 
-
-
-service GrpcClient {
-  rpc SendMessage (MessageRequest) returns (MessageResponse);
+service Logger {
+  rpc SendMessage (LogRequest) returns (LogResponse);
 }
 
-message MessageRequest {
+message LogRequest {
   int64  timestamp = 1;
 
   string logLine = 2;
@@ -37,6 +31,6 @@ message MessageRequest {
 
 }
 
-message MessageResponse {
+message LogResponse {
   string response = 1;
 }
