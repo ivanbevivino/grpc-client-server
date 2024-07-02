@@ -25,7 +25,7 @@ import (
 	"log"
 	"time"
 
-	pb "client-server/protoBuf/logMessage"
+	pb "client-server/protoBuf/logs"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
@@ -35,7 +35,7 @@ const (
 )
 
 var (
-	addr = flag.String("addr", ":50051", "the address to connect to")
+	addr = flag.String("logs-test-grpc.furycloud.io", "8080", "the address to connect to")
 )
 
 func main() {
@@ -47,23 +47,14 @@ func main() {
 	}
 	defer conn.Close()
 
-	c := pb.NewLoggerClient(conn)
+	c := pb.NewLogsServiceClient(conn)
 
 	// Contact the server and print out its response.
 	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
 	defer cancel()
-	r, err := c.SendMessage(ctx, &pb.LogRequest{
-		Timestamp: int64(123454555),
-		LogLine:   "HOLA COMO ESTAS ....",
-		Tags: []*pb.LogRequest_Tags{
-			{Value: "la app", Type: pb.LogRequest_APPLICATION},
-			{Value: "el scope", Type: pb.LogRequest_SCOPE},
-			{Value: "1.0.0", Type: pb.LogRequest_VERSION},
-			{Value: "10.0.20.12", Type: pb.LogRequest_HOST},
-		},
-	})
+	r, err := c.Export(ctx, &pb.ExportLogsServiceRequest{})
 	if err != nil {
 		log.Fatalf("could not greet: %v", err)
 	}
-	log.Printf("Greeting: %s", r.GetResponse())
+	log.Printf("Greeting: %s", r.PartialSuccess)
 }
