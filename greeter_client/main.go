@@ -35,7 +35,7 @@ const (
 )
 
 var (
-	addr = flag.String("logs-test-grpc.furycloud.io", "8080", "the address to connect to")
+	addr = flag.String("logs-test-grpc.test.io", "8080", "the address to connect to")
 )
 
 func main() {
