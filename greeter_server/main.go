@@ -26,7 +26,7 @@ import (
 	"log"
 	"net"
 
-	pb "client-server/protoBuf/logMessage"
+	pb "client-server/protoBuf/logs"
 	"google.golang.org/grpc"
 )
 
@@ -36,13 +36,13 @@ var (
 
 // server is used to implement helloworld.GreeterServer.
 type server struct {
-	pb.UnimplementedLoggerServer
+	pb.UnimplementedLogsServiceServer
 }
 
 // SayHello implements helloworld.GreeterServer
-func (s *server) SendMessage(ctx context.Context, in *pb.LogRequest) (*pb.LogResponse, error) {
-	log.Printf("Received: %v", in.LogLine)
-	return &pb.LogResponse{Response: "Log recived: " + in.LogLine}, nil
+func (s *server) Export(ctx context.Context, in *pb.ExportLogsServiceRequest) (*pb.ExportLogsServiceResponse, error) {
+	log.Printf("Received: %v", in.GetResourceLogs())
+	return &pb.ExportLogsServiceResponse{}, nil
 }
 
 func main() {
@@ -52,7 +52,7 @@ func main() {
 		log.Fatalf("failed to listen: %v", err)
 	}
 	s := grpc.NewServer()
-	pb.RegisterLoggerServer(s, &server{})
+	pb.RegisterLogsServiceServer(s, &server{})
 	log.Printf("server listening at %v", lis.Addr())
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)

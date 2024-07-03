@@ -21,13 +21,14 @@ package main
 
 import (
 	"context"
+	"crypto/tls"
 	"flag"
+	"google.golang.org/grpc/credentials"
 	"log"
 	"time"
 
 	pb "client-server/protoBuf/logs"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
 )
 
 const (
@@ -35,13 +36,14 @@ const (
 )
 
 var (
-	addr = flag.String("logs-test-grpc.test.io", "8080", "the address to connect to")
+	addr = flag.String("addr", "logs-test-grpc.test.io:443", "the address to connect to")
 )
 
 func main() {
 	flag.Parse()
 	// Set up a connection to the server.
-	conn, err := grpc.Dial(*addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	//conn, err := grpc.Dial(*addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpc.Dial(*addr, grpc.WithTransportCredentials(credentials.NewTLS(&tls.Config{})))
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)
 	}
